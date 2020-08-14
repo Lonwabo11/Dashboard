@@ -1,0 +1,132 @@
+
+#first{
+    width: 400px;
+
+}
+#second{
+    width: 400px;
+
+}
+#third{
+    width: 400px;
+
+}
+#fourth{
+    width: 400px;
+
+}
+#five{
+    width: 400px;
+
+}
+#six{
+    width: 400px;
+
+}
+#seven{
+    width: 400px;
+
+}
+#eight{
+    width: 400px;
+
+}
+#nine{
+    width: 400px;
+
+}
+#ten{
+    width: 400px;
+
+}
+
+#eleven{
+    width: 400px;
+
+}
+
+#twelve{
+    width: 400px;
+
+}
+
+
+#trimester{
+    border-style:solid;
+    border-color: #f0f0f0;
+    background-color: #f0f0f0;
+    font-size: 18px;
+    text-align: center;
+    color:black;
+}
+#month{
+    border-style:solid;
+    border-color: #f0f0f0;
+    background-color: #f0f0f0;
+    font-size: 18px;
+    text-align: center;
+    color:black;
+}
+#week{
+    border-style:solid;
+    border-color: #f0f0f0;
+    background-color: #f0f0f0;
+    font-size: 18px;
+    text-align: center;
+    color:black;
+}
+
+
+#at{
+    margin-top: 10px;
+    border-style:solid;
+    border-color: grey;
+    background-color: #f0f0f0;
+    padding-top: 0.9%;
+    text-align: center;
+    margin-right: 40px;
+    width: 180px;
+    height: 50px;
+    font-weight: bold;
+    color: black;
+}
+#wdt{
+    margin-right: 40px;
+    padding-top: 0.9%;
+    margin-top: 10px;
+    height: 50px;
+    border-style:solid;
+    border-color: grey;
+    background-color: #f0f0f0;
+    text-align: center;
+    color: black;
+    font-weight: bold;
+}
+#sot{
+    margin-right: 40px;
+    margin-top: 10px;
+    padding-top: 0.9%;
+    border-style:solid;
+    text-align: center;
+    height: 50px;
+    border-color: grey;
+    background-color: #f0f0f0;
+    color:black;
+    font-weight: bold;
+}
+#sl{
+    margin-right: 40px;
+    margin-top: 10px;
+    border-style:solid;
+    padding-top: 0.9%;
+    text-align: center;
+    height: 50px;
+    border-color: grey;
+    background-color: #f0f0f0;
+    font-weight: bold;
+    color: black;
+}
+
+#alrt{
+    margin-left: 15px;
+}
