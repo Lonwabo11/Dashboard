@@ -1,0 +1,116 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<br>
+&nbsp; &nbsp; show plots for the nights&nbsp;(including) &nbsp;
+<label for="datePicker"></label><input type="date" id="datePicker" placeholder="yyyy-mm-dd"  min="2019-01-01">&nbsp; to&nbsp;(excluding)&nbsp;
+<label for="datePicker2"></label><input type="date" id="datePicker2" placeholder="yyyy-mm-dd"  min="2019-01-01">
+<button type="submit" id="my_button">Get Plots</button>
+<br><br>
+<p id="alrt"></p>
+<br><br>
+
+<script>
+    let today = new Date();
+    let dd = today.getDate();
+    let mm = today.getMonth()+1;
+    let yyyy= today.getFullYear();
+
+    if(dd < 10){
+        dd='0'+dd
+    }
+    if(mm<10){
+        mm='0'+mm
+    }
+    today= yyyy+'-'+mm+'-'+dd;
+    document.getElementById("datePicker").setAttribute("max", today);
+    document.getElementById("datePicker2").setAttribute("max", today);
+</script>
+
+<script>
+    function show_graphs_on_button_click(){
+        let my_div= document.getElementById("container");
+
+        if (my_div.style.display === "none"){
+            my_div.style.display = "block"
+        }
+    }
+</script>
+
+
+<script>
+    function empty_and_invalid_dates() {
+
+        let date1 = document.getElementById('datePicker').value;
+        let date2 = document.getElementById('datePicker2').value;
+
+        if (date1 === '' && date2 === '' ){
+            document.getElementById('alrt').innerHTML= "Please choose a time frame in the date pickers.";
+            setTimeout(function() {document.getElementById('alrt').innerHTML='';},7000);
+        }
+        else if( moment(date1).isValid() === false || moment(date2).isValid() === false){
+            document.getElementById('alrt').innerHTML= "Please enter a valid date in your date pickers";
+            setTimeout(function() {document.getElementById('alrt').innerHTML='';},7000);
+        }
+        else if (date1 > date2){
+            document.getElementById('alrt').innerHTML= "Your chosen start date must be earlier than your chosen end date"+'<br/>'+"and the dates must not be equal";
+            setTimeout(function() {document.getElementById('alrt').innerHTML='';},7000);
+        }
+        else if(date1 < document.getElementById("datePicker").getAttribute('min') || date2 > document.getElementById("datePicker2").getAttribute('max') ){
+            document.getElementById('alrt').innerHTML= "You can only choose dates starting from 2019-01-01 until to today's date";
+            setTimeout(function() {document.getElementById('alrt').innerHTML='';},7000);
+        }
+        else
+        {
+            show_graphs_on_button_click()
+        }
+    }
+
+</script>
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='custom period graphs/allocated_time_custom_period.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='custom period graphs/shutter_open_time_custom_period.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='custom period graphs/weather_downtime_custom_period.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='custom period graphs/subscription_level_custom_period.js') }}"></script>
+
+
+<div class="container"  style="display: none"  id="container">
+    <div class="columns">
+        <div id="at">ALLOCATED TIME</div>
+        <div class="column" id='cp_at' style="height: 320px;"><canvas id="first" style="height: 300px;" ></canvas></div>
+    </div>
+    <br><br>
+
+    <div class="columns">
+        <div id="wdt">WEATHER DOWNTIME</div>
+        <div class="column" id='cp_wdt' style="height: 320px;"><canvas id="second" style="height: 300px;" ></canvas></div>
+    </div>
+    <br><br>
+
+    <div class="columns">
+        <div id="sot">SHUTTER OPEN TIME</div>
+        <div class="column" id='cp_sot' style="height: 320px;"><canvas id="third" style="height: 300px;" ></canvas></div>
+    </div>
+    <br><br>
+    <div class="columns">
+        <div id="sl">SUBSCRIPTION LEVEL</div>
+        <div class="column" id='cp_sl' style="height: 320px;"><canvas id="fourth" style="height: 300px;" ></canvas></div>
+    </div>
+
+</div>
+<br><br><br><br>
+
+
+<script>
+    let button= document.getElementById('my_button');
+    button.addEventListener('click',cp_allocated_time);
+    button.addEventListener('click',cp_shutter_open_time);
+    button.addEventListener('click',cp_weather_down_time);
+    button.addEventListener('click',empty_and_invalid_dates);
+    button.addEventListener('click',cp_subscription_level);
+</script>
+
+<br><br><br>
+
+{% endblock %}
