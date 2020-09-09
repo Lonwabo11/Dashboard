@@ -3,7 +3,34 @@
 {% block body %}
 
 <div class="jumbotron text-center">
-    <h1>Welcome to the Dashboard for steerable telescopes </h1>
+    <h1 id="title">Welcome to the SAAO small telescopes dashboard</h1>
+    <img src="{{ url_for('static', filename='css/small telescopes.jpg') }}" alt="sas_image_icon">
 </div>
+
+<footer>
+    <div class="wrapper">
+        <ul>
+            <li id="cape-heading">Cape Town</li>
+            <li>Observatory road</li>
+            <li>Observatory</li>
+            <li>Cape Town, 7925</li>
+            <li>South Africa</li>
+            <li><i class="fas fa-phone"></i> +27 21 4470025</li>
+        </ul>
+
+        <ul>
+            <li id="suth-heading">Sutherland</li>
+            <li>Old Fraserburg Road</li>
+            <li>Sutherland</li>
+            <li>6920</li>
+            <li>South Africa</li>
+            <li><i class="fas fa-phone"></i> +27 23 571 1205</li>
+        </ul>
+        <ul>
+            <li><img src="{{url_for('static', filename='css/saao.jpeg')}} " alt="logo" id="footer-img"></li>
+            <li>&copy; All rights reserved 2020</li>
+        </ul>
+    </div>
+</footer>
 
 {% endblock%}
