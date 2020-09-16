@@ -2,10 +2,10 @@ import datetime
 import shutil
 import os
 
-from shutter_open_time_database_population import dome_shutter_open_time
+from reading_shutter_open_time_logs import dome_shutter_open_time
 from dome_shutter_open_time import inserting_shutter_open_time
 
-date_today = datetime.datetime.now() - datetime.timedelta(days=23)
+date_today = datetime.datetime.now()
 day_of_month = date_today.strftime("%d")
 
 date_3_days_ago = date_today - datetime.timedelta(days=3)
