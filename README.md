@@ -83,7 +83,7 @@ python cli.py filepath
 'filepath' will be replaced by the file path in which you saved the spreadsheet(s) and cli.py 
 is the name of the python file containing the code to pass the file path to the spreadsheet  as a command line argument.
 
-The files sdb_access_update_night_info, length_of_observation_night and populating_dome_shutter_open_time have to be
+The files sdb_access_update_night_info, length_of_observation_night and daily_script_for_dome_open_time have to be
 placed in a cronjob as these files must execute every day. sdb_access_update_night_info.py and
-length_of_observation_night.py can be ran at 08:30 AM SAST and populating_dome_shutter_open_time.py must be ran at 
-12:25 PM SAST when the logs of the telescopes(1.0-m and 1.9-m) are available on the server. 
+length_of_observation_night.py can be ran at 08:30 AM SAST and daily_script_for_dome_open_time.py must be ran at 
+12:45 PM SAST when the logs of the telescopes(1.0-m and 1.9-m) are available on the server. 
