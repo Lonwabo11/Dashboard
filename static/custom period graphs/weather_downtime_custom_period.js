@@ -158,6 +158,14 @@ const cp_weather_down_time= ()=> {
                     good_weather_percentage = (good_weather_fraction * 100).toFixed(2);
                     bad_weather_percentage = (bad_weather_fraction * 100).toFixed(2);
 
+                    if (good_weather_percentage < 0){
+                        good_weather_percentage = 0
+                    }
+
+                    if (bad_weather_percentage > 100){
+                        bad_weather_percentage = 100
+                    }
+
                 });
 
                 weather_downtime_array.push(good_weather_percentage, bad_weather_percentage);

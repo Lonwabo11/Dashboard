@@ -107,7 +107,7 @@ def insert_into_dome_shutter_open_time_table(
 
 
 def dome_shutter_open_time(folder, telescope_name: str):
-    """Function to populate the shutter_open_time_40_inch database table in the Dashboard database
+    """Function to populate the Shutter_open_time database table in the Dashboard database
     :param folder: The path to either the 40inch or 74inch telescope log file(latest file in the directory)
     :param telescope_name: The name of the telescope you reading the log file of.
     """
