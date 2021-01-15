@@ -5,11 +5,14 @@ import re
 from dateutil import parser
 import os
 import MySQLdb
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def all_dates(filepath):
-    df = pd.read_excel(filepath, skiprows=1)
-    df_year = pd.read_excel(filepath, "Sheet2")
+    df = pd.read_excel(filepath, skiprows=1, engine='openpyxl')
+    df_year = pd.read_excel(filepath, "Sheet2", engine="openpyxl")
     year = re.findall(r"[0-9]+", df_year.columns[2])
     all_days = []
     for index, row in df.iterrows():
@@ -23,10 +26,11 @@ def all_dates(filepath):
     return all_days
 
 
-database_host = os.environ.get("database_host")
-database_user = os.environ.get("user")
-database_password = os.environ.get("password")
-database_name = os.environ.get("database")
+database_host = os.getenv("database_host")
+database_user = os.getenv("user")
+database_password = os.getenv("password")
+database_name = os.getenv("database")
+
 
 connection = MySQLdb.connect(
     host=database_host,

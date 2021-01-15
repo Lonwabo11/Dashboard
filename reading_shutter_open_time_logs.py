@@ -4,11 +4,14 @@ from astropy.time import Time
 from datetime import datetime
 import pandas as pd
 import MySQLdb
+from dotenv import load_dotenv
 
-dashboard_database_host = os.environ.get("database_host")
-dashboard_database_user = os.environ.get("user")
-dashboard_database_password = os.environ.get("password")
-dashboard_database_name = os.environ.get("database")
+load_dotenv()
+
+dashboard_database_host = os.getenv("MYSQL_DATABASE_HOST")
+dashboard_database_user = os.getenv("MYSQL_DATABASE_USER")
+dashboard_database_password = os.getenv("MYSQL_DATABASE_PASSWORD")
+dashboard_database_name = os.getenv("MYSQL_DATABASE_DB")
 
 connection = MySQLdb.connect(
     host=dashboard_database_host,

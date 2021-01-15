@@ -1,16 +1,19 @@
 import os
 import mysql.connector
 from typing import List
+from dotenv import load_dotenv
 
-database_host = os.environ.get("database_host")
-database_user = os.environ.get("user")
-database_password = os.environ.get("password")
-database_name = os.environ.get("database")
+load_dotenv()
 
-sdb_host = os.environ.get("sdb_host")
-sdb_database_user = os.environ.get("sdb_database_user")
-sdb_database_password = os.environ.get("sdb_database_password")
-sdb_database_name = os.environ.get("sdb_database_name")
+database_host = os.getenv("MYSQL_DATABASE_HOST")
+database_user = os.getenv("MYSQL_DATABASE_USER")
+database_password = os.getenv("MYSQL_DATABASE_PASSWORD")
+database_name = os.getenv("MYSQL_DATABASE_DB")
+
+sdb_host = os.getenv("SDB_HOST")
+sdb_database_user = os.getenv("SDB_DATABASE_USER")
+sdb_database_password = os.getenv("SDB_DATABASE_PASSWORD")
+sdb_database_name = os.getenv("SDB_DATABASE_NAME")
 
 sdb_connection = mysql.connector.connect(
     host=sdb_host,

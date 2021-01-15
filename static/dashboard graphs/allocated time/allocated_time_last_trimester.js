@@ -49,7 +49,7 @@ function createPlot_trimester(allocated_time, unallocated_time) {
     let trimester_chart = new Chart(at_trimester, {
         type: "bar",
         data: {
-            labels: ["1.0-m", "1.9-m", "IRSF"],
+            labels: ["1.0-m", "1.9-m", "IRSF", "Lesedi"],
             datasets: [
                 {
                     label: "allocated days",
@@ -85,7 +85,7 @@ function createPlot_trimester(allocated_time, unallocated_time) {
                             fontColor:'black'
                         },
                         stacked: true,
-                        barPercentage: 0.4,
+                        barPercentage: 0.5,
                     }
                 ],
                 yAxes: [
@@ -143,14 +143,15 @@ const allocated_time_trimester = () => {
         query_parameter_end_date = get_last_trimester_dates(previous_trimester)[1],
         url_one_meter = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=1.0-m`,
         url_one_point_nine_meter = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=1.9-m`,
-        url_irsf = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=IRSF`;
+        url_irsf = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=IRSF`,
+        url_lesedi = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=Lesedi`;
 
 // Making the API calls for  each telescope
 
     const get_one_meter_data = d3.json(url_one_meter);
     const get_one_point_nine_meter_data = d3.json(url_one_point_nine_meter);
     const get_irsf_data = d3.json(url_irsf);
-
+    const get_lesedi_data = d3.json(url_lesedi)
 
     // variables to store the number of days an observer is not allocated
     // for observing and vice versa
@@ -163,6 +164,9 @@ const allocated_time_trimester = () => {
 
     let allocated_count_IRSF = 0;
     let unallocated_count_IRSF = 0;
+
+    let allocated_count_lesedi = 0;
+    let unallocated_count_lesedi = 0;
 
     // function to create the plot of the last trimester of the current year based on the start and end dates
     // provided by the get_last_trimester_dates_function
@@ -206,6 +210,13 @@ const allocated_time_trimester = () => {
                 ) {
                     allocated_count_one_meter += 1;
                 }
+                if (
+                    value.telescope === "Lesedi" &&
+                    value.scheduled_downtime_category !== "None"
+                ) {
+                    allocated_count_lesedi += 1;
+                }
+
 
                 //one point nine meter (allocated and unallocated days)
                 if (value.telescope === "1.9-m" && value.observer === "") {
@@ -230,6 +241,14 @@ const allocated_time_trimester = () => {
                 ) {
                     allocated_count_IRSF += 1;
                 }
+
+                if (value.telescope === "Lesedi" && value.observer !== "" && value.observer !== null){
+                    allocated_count_lesedi +=1
+                }
+                if (value.telescope === "Lesedi" && value.observer === "" &&
+                    value.scheduled_downtime_category === "None"){
+                    unallocated_count_lesedi += 1
+                }
             });
         });
 
@@ -249,6 +268,11 @@ const allocated_time_trimester = () => {
                 allocated: allocated_count_IRSF,
                 unallocated: unallocated_count_IRSF,
                 telescope_name: "IRSF"
+            },
+            {
+                allocated: allocated_count_lesedi,
+                unallocated: unallocated_count_lesedi,
+                telescope_name: "Lesedi"
             }
         ];
         // these arrays will store the data we will use to plot with. They store the
@@ -269,7 +293,8 @@ const allocated_time_trimester = () => {
     Promise.all([
         get_one_meter_data,
         get_one_point_nine_meter_data,
-        get_irsf_data
+        get_irsf_data,
+        get_lesedi_data
     ])
         .then(getting_api_data)
         .catch(e => {

@@ -3,11 +3,14 @@ from datetime import datetime
 import datetime
 from typing import Dict, Tuple
 import MySQLdb
+from dotenv import load_dotenv
 
-database_host = os.environ.get("database_host")
-database_user = os.environ.get("user")
-database_password = os.environ.get("password")
-database_name = os.environ.get("database")
+load_dotenv()
+
+database_host = os.getenv("MYSQL_DATABASE_HOST")
+database_user = os.getenv("MYSQL_DATABASE_USER")
+database_password = os.getenv("MYSQL_DATABASE_PASSWORD")
+database_name = os.getenv("MYSQL_DATABASE_DB")
 
 connection = MySQLdb.connect(
     host=database_host, user=database_user, passwd=database_password, db=database_name
