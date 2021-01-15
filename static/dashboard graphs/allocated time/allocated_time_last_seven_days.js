@@ -27,7 +27,7 @@ function createPlot_week(allocated_time_week, unallocated_time_week) {
     let week_chart = new Chart(at_week, {
         type: "bar",
         data: {
-            labels: ["1.0-m", "1.9-m", "IRSF"],
+            labels: ["1.0-m", "1.9-m", "IRSF", "Lesedi"],
             datasets: [
                 {
                     label: "allocated days",
@@ -63,7 +63,7 @@ function createPlot_week(allocated_time_week, unallocated_time_week) {
                             fontColor:'black'
                         },
                         stacked: true,
-                        barPercentage: 0.4,
+                        barPercentage: 0.5,
                     }
                 ],
                 yAxes: [{ scaleLabel:{display:true, labelString:'DAYS', fontSize:15, fontColor:'black'},
@@ -89,6 +89,7 @@ const allocated_time_week = () => {
     let url_one_meter = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=1.0-m`;
     let url_one_point_nine_meter = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=1.9-m`;
     let url_irsf = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=IRSF`;
+    let url_lesedi = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=Lesedi`;
 
 //making calls to the API for each telescope to get the allocated and unallocated
 // days for each telescope based on the rota
@@ -96,6 +97,7 @@ const allocated_time_week = () => {
     const get_one_meter_data = d3.json(url_one_meter);
     const get_one_point_nine_meter_data = d3.json(url_one_point_nine_meter);
     const get_irsf_data = d3.json(url_irsf);
+    const get_lesedi_data = d3.json(url_lesedi)
 
     // variables to store the number of days an observer is not allocated
     // for observing and vice versa
@@ -109,6 +111,8 @@ const allocated_time_week = () => {
     let allocated_count_IRSF = 0;
     let unallocated_count_IRSF = 0;
 
+    let allocated_count_lesedi = 0;
+    let unallocated_count_lesedi = 0;
 
     function getting_api_data(api_data) {
         api_data.forEach(data => {
@@ -128,8 +132,12 @@ const allocated_time_week = () => {
                     allocated_count_IRSF += 1;
                 }
 
+                if (value.telescope === "Lesedi" && value.scheduled_downtime_category !== "None"){
+                    allocated_count_IRSF += 1;
+                }
+
                 // one meter(allocated and unallocated days)
-                if (value.telescope === "1.0-m" && value.observer === "") {
+                if (value.telescope === "1.0-m" && value.observer === "" && value.scheduled_downtime_category === "None") {
                     unallocated_count_one_meter += 1;
                 }
                 if (
@@ -141,7 +149,8 @@ const allocated_time_week = () => {
                 }
 
                 //one point nine meter (allocated and unallocated days)
-                if (value.telescope === "1.9-m" && value.observer === "") {
+                if (value.telescope === "1.9-m" && value.observer === ""
+                    && value.scheduled_downtime_category === "None") {
                     unallocated_count_one_nine += 1;
                 }
                 if (
@@ -163,6 +172,19 @@ const allocated_time_week = () => {
                 ) {
                     allocated_count_IRSF += 1;
                 }
+
+                //Lesedi (allocated and unallocated days)
+                if (value.telescope === "Lesedi" && value.observer === ""
+                    && value.scheduled_downtime_category === "None") {
+                    unallocated_count_lesedi += 1;
+                }
+                if (
+                    value.telescope === "Lesedi" &&
+                    value.observer !== "" &&
+                    value.observer !== null
+                ) {
+                    allocated_count_lesedi += 1;
+                }
             });
         });
 
@@ -182,6 +204,11 @@ const allocated_time_week = () => {
                 allocated: allocated_count_IRSF,
                 unallocated: unallocated_count_IRSF,
                 telescope_name: "IRSF"
+            },
+            {
+                allocated: allocated_count_lesedi,
+                unallocated: unallocated_count_lesedi,
+                telescope_name: "Lesedi"
             }
         ];
 
@@ -205,7 +232,8 @@ const allocated_time_week = () => {
     Promise.all([
         get_one_meter_data,
         get_one_point_nine_meter_data,
-        get_irsf_data
+        get_irsf_data,
+        get_lesedi_data
     ])
         .then(getting_api_data)
         .catch(e => {
