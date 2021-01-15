@@ -1,27 +1,30 @@
-import mysql.connector
+import MySQLdb
 import os
 import datetime
 from typing import List
+from dotenv import load_dotenv
 
-"""environment variables for the Dashboard database and sbd database"""
-sdb_host = os.environ.get("sdb_host")
-sdb_database_user = os.environ.get("sdb_database_user")
-sdb_database_password = os.environ.get("sdb_database_password")
-sdb_database_name = os.environ.get("sdb_database_name")
+load_dotenv()
 
-dashboard_database_host = os.environ.get("database_host")
-dashboard_database_user = os.environ.get("user")
-dashboard_database_password = os.environ.get("password")
-dashboard_database_name = os.environ.get("database")
+"""environment variables for the Dashboard database and sdb database"""
+sdb_host = os.getenv("SDB_HOST")
+sdb_database_user = os.getenv("SDB_DATABASE_USER")
+sdb_database_password = os.getenv("SDB_DATABASE_PASSWORD")
+sdb_database_name = os.getenv("SDB_DATABASE_NAME")
 
-sdb_connection = mysql.connector.connect(
+dashboard_database_host = os.getenv("MYSQL_DATABASE_HOST")
+dashboard_database_user = os.getenv("MYSQL_DATABASE_USER")
+dashboard_database_password = os.getenv("MYSQL_DATABASE_PASSWORD")
+dashboard_database_name = os.getenv("MYSQL_DATABASE_DB")
+
+sdb_connection = MySQLdb.connect(
     host=sdb_host,
     user=sdb_database_user,
     passwd=sdb_database_password,
     database=sdb_database_name,
 )
 
-connection = mysql.connector.connect(
+connection = MySQLdb.connect(
     host=dashboard_database_host,
     user=dashboard_database_user,
     passwd=dashboard_database_password,
@@ -36,7 +39,8 @@ def get_twilight_and_weather_from_sdb(observation_night_date: datetime.date) -> 
     :param observation_night_date: The day of the observation(the date)
     :return: returns the results of the query below
     """
-    mysql_query = """SELECT
+    with sdb_connection.cursor(dictionary=True) as sdb_cursor:
+        mysql_query = """SELECT
                            EveningTwilightEnd,
                            MorningTwilightStart,
                            TimeLostToWeather,
@@ -44,12 +48,9 @@ def get_twilight_and_weather_from_sdb(observation_night_date: datetime.date) -> 
                      FROM sdb.NightInfo
                      WHERE Date = %(start_date)s"""
 
-    cursor = sdb_connection.cursor(dictionary=True)
-    cursor.execute(mysql_query, dict(start_date=observation_night_date))
-    results = cursor.fetchall()
-    cursor.close()
-    sdb_connection.close()
-    return results
+        sdb_cursor.execute(mysql_query, dict(start_date=observation_night_date))
+        results = sdb_cursor.fetchall()
+        return results
 
 
 def update_night_info(observing_night: datetime.date) -> str:
@@ -65,23 +66,22 @@ def update_night_info(observing_night: datetime.date) -> str:
         time_lost_to_weather = result["TimeLostToWeather"]
         date = result["Date"]
 
-        mysql_update_query = """UPDATE Night_Info
+        with connection.cursor() as sdb_cursor:
+            mysql_update_query = """UPDATE Night_Info
                                                 SET EveningTwilightEnd = %(observation_starting_time)s,
                                                     MorningTwilightStart = %(observation_ending_time)s,
                                                     TimeLostToWeather = %(time_lost_to_weather)s
-                            WHERE start_date = %(observation_date)s """
-        cursor = connection.cursor()
-        cursor.execute(
-            mysql_update_query,
-            dict(
-                observation_starting_time=evening_twilight_end,
-                observation_ending_time=morning_twilight_start,
-                time_lost_to_weather=time_lost_to_weather,
-                observation_date=date,
-            ),
-        )
-        connection.commit()
-        connection.close()
-        cursor.close()
+                                     WHERE start_date = %(observation_date)s """
+
+            sdb_cursor.execute(
+                mysql_update_query,
+                dict(
+                    observation_starting_time=evening_twilight_end,
+                    observation_ending_time=morning_twilight_start,
+                    time_lost_to_weather=time_lost_to_weather,
+                    observation_date=date
+                ),
+            )
+            connection.commit()
 
     return "Night_Info has been updated"

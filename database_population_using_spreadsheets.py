@@ -6,13 +6,16 @@ from datetime import date
 import pandas as pd
 from dateutil import parser
 from typing import Dict
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # database connection
 
-database_host = os.environ.get("database_host")
-database_user = os.environ.get("user")
-database_password = os.environ.get("password")
-database_name = os.environ.get("database")
+database_host = os.getenv("MYSQL_DATABASE_HOST")
+database_user = os.getenv("MYSQL_DATABASE_USER")
+database_password = os.getenv("MYSQL_DATABASE_PASSWORD")
+database_name = os.getenv("MYSQL_DATABASE_DB")
 
 connection = pymysql.connect(
     host=database_host,
@@ -118,8 +121,8 @@ def observation_details(telescope_name: str, filepath: str) -> Dict:
        pandas and specify which sheet in the spreadsheets is used for getting the date df_year
        is to get the year from the spreadsheet"""
 
-    df = pd.read_excel(filepath, skiprows=1)
-    df_year = pd.read_excel(filepath, "Sheet2")
+    df = pd.read_excel(filepath, skiprows=1, engine="openpyxl")
+    df_year = pd.read_excel(filepath, "Sheet2", engine="openpyxl")
     # variables used for storing the date we read from the spreadsheets
     observer = ""
     instrument = ""

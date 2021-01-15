@@ -7,7 +7,9 @@ import datetime
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from typing import Tuple
+from dotenv import load_dotenv
 
+load_dotenv()
 app = Flask(__name__)
 
 sentry_sdk.init(
@@ -15,10 +17,10 @@ sentry_sdk.init(
     integrations=[FlaskIntegration()],
 )
 
-app.config["MYSQL_DATABASE_HOST"] = os.environ.get("MYSQL_DATABASE_HOST")
-app.config["MYSQL_DATABASE_USER"] = os.environ.get("MYSQL_DATABASE_USER")
-app.config["MYSQL_DATABASE_PASSWORD"] = os.environ.get("MYSQL_DATABASE_PASSWORD")
-app.config["MYSQL_DATABASE_DB"] = os.environ.get("MYSQL_DATABASE_DB")
+app.config["MYSQL_DATABASE_HOST"] = os.getenv("MYSQL_DATABASE_HOST")
+app.config["MYSQL_DATABASE_USER"] = os.getenv("MYSQL_DATABASE_USER")
+app.config["MYSQL_DATABASE_PASSWORD"] = os.getenv("MYSQL_DATABASE_PASSWORD")
+app.config["MYSQL_DATABASE_DB"] = os.getenv("MYSQL_DATABASE_DB")
 
 mysql = MySQL(app)
 
@@ -196,6 +198,45 @@ def irsf_exception_to_dome(
     return results
 
 
+def lesedi_exception_to_dome(
+        start_date: str, end_date: str, telescope_name: str
+) -> Tuple:
+    """We currently do not have a way to get the dome shutter open time for Lesedi.
+     This function makes its own database query so as to get the data to display for the API
+     without using shutter open time"""
+    database_connection = mysql.connect()
+    with database_connection.cursor() as cursor:
+        mysql_query = """SELECT
+                                start_date,
+                                TimeLostToWeather,
+                                Night_length,
+                                observer,
+                                instrument_name,
+                                telescope_name,
+                                telescope_usage
+        FROM rota
+        LEFT OUTER JOIN Night_Info ON rota.night_info_id=Night_Info.night_info_id
+        LEFT OUTER JOIN Instruments ON rota.instrument_id= Instruments.instrument_id
+        LEFT OUTER JOIN Telescopes ON rota.telescope_id= Telescopes.telescope_id
+        LEFT OUTER JOIN  Telescope_usage ON rota.telescope_usage_id= Telescope_usage.telescope_usage_id
+        WHERE
+        start_date >= %(starting_date)s
+        AND start_date <%(ending_date)s
+        AND telescope_name = %(telescope_name)s
+        """
+
+        cursor.execute(
+            mysql_query,
+            dict(
+                starting_date=start_date,
+                ending_date=end_date,
+                telescope_name=telescope_name,
+            ),
+        )
+    results = cursor.fetchall()
+    return results
+
+
 @app.route("/night-info", methods=["GET"])
 def night_info():
     """This is the end-point which shows the API we use to plot our graphs and
@@ -242,11 +283,27 @@ def night_info():
         }
         for result in irsf_exception_to_dome(my_dates[0], my_dates[1], telescope)
     ]
+    content_lesedi = [
+        {
+            "night": (result[0]).isoformat(),
+            "observer": result[3],
+            "instrument": result[4],
+            "telescope": result[5],
+            "scheduled_downtime_category": result[6],
+            "weather_downtime": result[1],
+            "night_length": result[2],
+        }
+        for result in lesedi_exception_to_dome(my_dates[0], my_dates[1], telescope)
+    ]
 
-    res = list(map(itemgetter("telescope"), content_irsf))
+    irsf_data = list(map(itemgetter("telescope"), content_irsf))
+    lesedi_data = list(map(itemgetter("telescope"), content_lesedi))
 
-    if "IRSF" in res:
+    if "IRSF" in irsf_data:
         return jsonify({"observation_details": content_irsf})
+
+    if "Lesedi" in lesedi_data:
+        return jsonify({"observation_details": content_lesedi})
 
     return jsonify({"observation_details": content})
 

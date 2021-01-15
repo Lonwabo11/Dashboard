@@ -27,7 +27,7 @@ Then clone this repository to a location of your choice
 ````bash
 git clone https://github.com/Lonwabo11/Dashboard.git
 ````
-and make sure you are on the master branch,
+Also make sure you are on the master branch,
 ```bash
 git checkout master
 ```
@@ -54,9 +54,6 @@ Then before running the project, we need to define the environment variables
 | sdb_password| The password for the SDB database| 56978
 |sdb_database| The name of the database hosted at sdb_host| SALT_SDB
 |database_host| The name of the SALT/SAAO database| localhost
-|user| The username for the SAAO/SALT Database| root
-|database_password| The password of the SAAO/SALT Database| 1235
-|database_name| The name of the SALT/SAAO Database| SALT Dashboard
  
 See below how to run the script
 
@@ -74,8 +71,8 @@ Then we run the file spreadsheet_dates.py, which will add all the dates on the s
 ```bash
 python spreadsheet_dates filepath
 ```
-Then we run the script(database_population_using_spreadsheets.py file), we passe the file path to the spreadsheet 
-and it's being read as a command line argument. 
+Then we run the script(database_population_using_spreadsheets.py file), we must pass the file path to the spreadsheet to
+be read via a command line argument. 
 
 ```bash
 python cli.py filepath
@@ -85,5 +82,5 @@ is the name of the python file containing the code to pass the file path to the 
 
 The files sdb_access_update_night_info, length_of_observation_night and daily_script_for_dome_open_time have to be
 placed in a cronjob as these files must execute every day. sdb_access_update_night_info.py and
-length_of_observation_night.py can be ran at 08:30 AM SAST and daily_script_for_dome_open_time.py must be ran at 
+length_of_observation_night.py can be run at 08:30 AM SAST and daily_script_for_dome_open_time.py must be run at 
 12:45 PM SAST when the logs of the telescopes(1.0-m and 1.9-m) are available on the server. 

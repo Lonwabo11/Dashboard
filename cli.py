@@ -4,16 +4,12 @@ from database_population_using_spreadsheets import populating_database_tables
 import click
 import pprint
 import os
-import pymysql
+from dotenv import load_dotenv
+from app import mysql
 
-database_host = os.environ.get("database_host")
-database_user = os.environ.get("user")
-database_password = os.environ.get("password")
-database_name = os.environ.get("database")
+load_dotenv()
 
-connection = pymysql.connect(
-    host=database_host, user=database_user, passwd=database_password, db=database_name
-)
+connection = mysql.connect()
 cursor = connection.cursor()
 
 
@@ -37,7 +33,7 @@ def main(filepath):
             populating_database_tables("IRSF", filepath)
         )
         pprint.PrettyPrinter(indent=4).pprint(
-            populating_database_tables( "Lesedi", filepath)
+            populating_database_tables("Lesedi", filepath)
         )
     print("data from", filepath, "has been added to the database")
 
