@@ -23,18 +23,22 @@ def main(filepath):
     if os.path.isfile(filepath):
         # call the function populating_database_tables so as to add the data from the spreadsheet in the filepath to
         # the database for all the populating_database_tables of concern
-        pprint.PrettyPrinter(indent=4).pprint(
-            populating_database_tables("1.9-m", filepath)
-        )
-        pprint.PrettyPrinter(indent=4).pprint(
-            populating_database_tables("1.0-m", filepath)
-        )
-        pprint.PrettyPrinter(indent=4).pprint(
-            populating_database_tables("IRSF", filepath)
-        )
-        pprint.PrettyPrinter(indent=4).pprint(
-            populating_database_tables("Lesedi", filepath)
-        )
+
+        try:
+            pprint.PrettyPrinter(indent=4).pprint(
+                populating_database_tables("1.9-m", filepath))
+            pprint.PrettyPrinter(indent=4).pprint(
+                populating_database_tables("1.0-m", filepath)
+            )
+            pprint.PrettyPrinter(indent=4).pprint(
+                populating_database_tables("IRSF", filepath)
+            )
+            pprint.PrettyPrinter(indent=4).pprint(
+                populating_database_tables("Lesedi", filepath)
+            )
+        except KeyError as error:
+            print("{}. Please check that your excel file has a column for each of the telescopes".format(error))
+
     print("data from", filepath, "has been added to the database")
 
 
