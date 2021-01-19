@@ -9,6 +9,13 @@
 <br><br>
 <p id="alrt"></p>
 <br><br>
+<style>
+
+#no-data-sl, #no-data-sot, #no-data-at, #no-data-wdt{
+    color: black;
+    font-weight: bold;
+}
+</style>
 
 <script>
     let today = new Date();
@@ -79,23 +86,27 @@
     <div class="columns">
         <div id="at">ALLOCATED TIME</div>
         <div class="column" id='cp_at' style="height: 320px;"><canvas id="first" style="height: 300px;" ></canvas></div>
+        <div class="column" id='no-data-at' style="height: 320px;"></div>
     </div>
     <br><br>
 
     <div class="columns">
         <div id="wdt">WEATHER DOWNTIME</div>
         <div class="column" id='cp_wdt' style="height: 320px;"><canvas id="second" style="height: 300px;" ></canvas></div>
+        <div class="column" id='no-data-wdt' style="height: 320px;"></div>
     </div>
     <br><br>
 
     <div class="columns">
         <div id="sot">SHUTTER OPEN TIME</div>
         <div class="column" id='cp_sot' style="height: 320px;"><canvas id="third" style="height: 300px;" ></canvas></div>
+        <div class="column" id='no-data-sot' style="height: 320px;">No data for the chosen time period</div>
     </div>
     <br><br>
     <div class="columns">
         <div id="sl">SUBSCRIPTION LEVEL</div>
         <div class="column" id='cp_sl' style="height: 320px;"><canvas id="fourth" style="height: 300px;" ></canvas></div>
+        <div class="column" id='no-data-sl' style="height: 320px;">No data for the chosen time period</div>
     </div>
 
 </div>
