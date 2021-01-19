@@ -71,7 +71,7 @@ const cp_shutter_open_time= () => {
                                 fontSize:15,
                                 maxTicksLimit:8
                             },
-                            barPercentage:0.4
+                            barPercentage:0.5
                         }
                     ],
                     xAxes:[{scaleLabel:{display: true, labelString: 'Telescopes', fontColor:'black', fontSize:15},
@@ -94,7 +94,14 @@ const cp_shutter_open_time= () => {
                 }
             }
         });
-
+        const isAllZero = shutter_open_time.every(item => item === '0.00')
+        if (isAllZero === true){
+            document.getElementById('no-data-sot').style.display = 'block'
+            document.getElementById("cp_sot").style.display = 'none'
+        }
+        else{
+            document.getElementById('no-data-sot').style.display = 'none'
+        }
     }
 
 // We check that the start date chosen in your datepicker is less the the end date and then we use Promise.all to combine all
