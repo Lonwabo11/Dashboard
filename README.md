@@ -53,7 +53,6 @@ Then before running the project, we need to define the environment variables
 | sdb_user| The username for the SDB database|SDBUSER  
 | sdb_password| The password for the SDB database| 56978
 |sdb_database| The name of the database hosted at sdb_host| SALT_SDB
-|database_host| The name of the SALT/SAAO database| localhost
  
 See below how to run the script
 
