@@ -26,10 +26,10 @@ def all_dates(filepath):
     return all_days
 
 
-database_host = os.getenv("database_host")
-database_user = os.getenv("user")
-database_password = os.getenv("password")
-database_name = os.getenv("database")
+database_host = os.getenv("MYSQL_DATABASE_HOST")
+database_user = os.getenv("MYSQL_DATABASE_USER")
+database_password = os.getenv("MYSQL_DATABASE_PASSWORD")
+database_name = os.getenv("MYSQL_DATABASE_DB")
 
 
 connection = MySQLdb.connect(
