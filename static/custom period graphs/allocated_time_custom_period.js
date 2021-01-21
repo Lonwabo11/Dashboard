@@ -11,6 +11,7 @@ const cp_allocated_time = () => {
     let url_one_meter = "";
     let url_one_point_nine_meter = "";
     let url_irsf = "";
+    let url_lesedi = ""
 
 // We ensure that there are dates chosen in the datepickers by checking to see if their value is empty or not, hence the check via
     //the if statement. Inside the if statement, we give the api calls to be made for each telescope
@@ -19,12 +20,14 @@ const cp_allocated_time = () => {
         url_one_meter = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=1.0-m`;
         url_one_point_nine_meter = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=1.9-m`;
         url_irsf = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=IRSF`;
+        url_lesedi = `/night-info?start_date=${query_parameter_start_date}&end_date=${query_parameter_end_date}&telescope=Lesedi`;
     }
 
 // making the api calls to the API for each telescope
     const get_one_meter_data = d3.json(url_one_meter);
     const get_one_point_nine_meter_data = d3.json(url_one_point_nine_meter);
     const get_irsf_data = d3.json(url_irsf);
+    const get_lesedi_data = d3.json(url_lesedi);
 
 // These variables will store the allocated and unallocated observation days from the observation rota for each telescope
     let allocated_count_one_meter = 0;
@@ -36,6 +39,10 @@ const cp_allocated_time = () => {
     let allocated_count_IRSF = 0;
     let unallocated_count_IRSF = 0;
 
+    let allocated_count_lesedi = 0;
+    let unallocated_count_lesedi = 0;
+
+
     function createPlots(allocated_time, unallocated_time){
         // the following two lines are re-drawing the chart so as to not stack one chart on top of another when redrawing a chart
         document.getElementById("cp_at").innerHTML = '&nbsp;';
@@ -46,7 +53,7 @@ const cp_allocated_time = () => {
 
             type: "bar",
             data: {
-                labels: ["1.0-m", "1.9-m", "IRSF"],
+                labels: ["1.0-m", "1.9-m", "IRSF", "Lesedi"],
                 datasets: [
                     {
                         label: "allocated days",
@@ -82,7 +89,7 @@ const cp_allocated_time = () => {
                                 fontColor: 'black'
                             },
                             stacked: true,
-                            barPercentage: 0.4
+                            barPercentage: 0.5
                         }
                     ],
                     yAxes: [
@@ -109,7 +116,7 @@ const cp_allocated_time = () => {
 // We ensure that your chosen start date must be less than your chosen end date in the datepickers,
     // then we combine all the api calls(Promises) to a single call using Promise.all
     if (query_parameter_start_date < query_parameter_end_date ){
-        Promise.all([get_one_meter_data, get_one_point_nine_meter_data, get_irsf_data]).then(
+        Promise.all([get_one_meter_data, get_one_point_nine_meter_data, get_irsf_data, get_lesedi_data]).then(
             telescopeData => {
                 telescopeData.forEach(data => {
                     data.observation_details.forEach(value => {
@@ -128,6 +135,11 @@ const cp_allocated_time = () => {
                         if (value.telescope === "IRSF" && value.scheduled_downtime_category !== 'None'){
                             allocated_count_IRSF += 1;
                         }
+
+                        if (value.telescope === "Lesedi" && value.scheduled_downtime_category !== 'None'){
+                            allocated_count_lesedi += 1;
+                        }
+
 
                         // one meter(allocated and unallocated days)
                         if (value.telescope === "1.0-m" && value.observer === "") {
@@ -164,6 +176,18 @@ const cp_allocated_time = () => {
                         ) {
                             allocated_count_IRSF += 1;
                         }
+
+                        //lesedi (allocated and unallocated days)
+                        if (value.telescope === "Lesedi" && value.observer === "") {
+                            unallocated_count_lesedi += 1;
+                        }
+                        if (
+                            value.telescope === "Lesedi" &&
+                            value.observer !== "" &&
+                            value.observer !== null
+                        ) {
+                            allocated_count_lesedi += 1;
+                        }
                     });
                 });
 
@@ -182,6 +206,11 @@ const cp_allocated_time = () => {
                         allocated: allocated_count_IRSF,
                         unallocated: unallocated_count_IRSF,
                         TelescopeName: "IRSF"
+                    },
+                    {
+                        allocated: allocated_count_lesedi,
+                        unallocated: unallocated_count_lesedi,
+                        TelescopeName: "Lesedi"
                     }
                 ];
 
@@ -195,6 +224,7 @@ const cp_allocated_time = () => {
                 TelescopeData.map(d=>{
                     allocated_time_array.push(d.allocated);
                     unallocated_time_array.push(d.unallocated);
+                    console.log(allocated_time_array, unallocated_time_array)
                 });
                 // We call the createPlots method to plot the graph for allocated days and
                 //unallocated days in the observation rota

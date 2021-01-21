@@ -83,7 +83,14 @@ const cp_subscription_level = async ()  => {
                 responsive: false
             }
         });
-
+        const isAllZero = api_data.every(item => item === 0)
+        if (isAllZero ===  true){
+            document.getElementById('no-data-sl').style.display = 'block';
+            document.getElementById('cp_sl').style.display = 'none'
+        }
+        else {
+            document.getElementById("no-data-sl").style.display = 'none'
+        }
         chart.data.datasets[0].data = api_data;
         chart.update();
     }
